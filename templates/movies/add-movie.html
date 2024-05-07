@@ -1,0 +1,162 @@
+{% include "/app/header.html" %}
+
+{% if not _search == "" and response_movie %}
+
+
+
+
+  <!----------------------------------------- Comienzo del container que contiene el row de la cabecera ---------------------------------------->
+
+  <div class="container">
+    <div class=" border-bottom border-secondary" style="width: 100%">
+      <div class="row p-3">
+        <div class="col-md-4 p-md-5 p-sm-0">
+          <img src="https://image.tmdb.org/t/p/original{{ response_movie['poster_path'] }}" class="img-fluid rounded"
+            width="300" height="400" alt="{{ response_movie['title'] }}" />
+        </div>
+        <div class="col-md-8 pt-md-5">
+          <div class="card-body">
+            <h1 class="card-title pt-5"><strong>{{ response_movie['title'] }}</strong></h1>
+            <hr>
+            Fecha de publicación: {{ response_movie['release_date'] }}
+            <p class="card-text">
+              Géneros:
+              {% for genre in response_movie['genres'] %}
+              {{ genre['name'] }}
+              {% endfor %}
+            </p>
+            <h3><strong>Sinopsis:</strong></h3>
+            <p>{{ response_movie['overview'] }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!----------------------------------------- Final del container que contiene el row de la cabecera ---------------------------------------->
+
+
+  <div class="container pt-sm-3">
+    <h1>Reparto</h1>
+    <div class="overflow-x-auto">
+    <div class="d-flex">
+      <div class="d-inline-flex">
+      {% for credit in response_movie_credits['cast'] %}
+        <div class="pe-2" style="width: 10rem;">
+          <div class="">
+            <img src="https://image.tmdb.org/t/p/original{{ credit['profile_path'] }}" class="img-fluid rounded" alt="...">
+            <center>
+            <p class="">{{ credit['name']}}</p>
+            <p class="">{{ credit['character']}}</p>
+            </center>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="container pt-sm-3">
+    <span>
+      <center>
+        <div
+          class="container-sm"
+        >
+          
+        
+        <form action="/add-movie-rec" method="POST">
+            <input type="hidden" name="id" value="{{ response_movie['id'] }}">
+          <button class="btn btn-sm btn-dark" type="submit">Agregar</button>
+        </form>
+      
+      </div>
+        
+      </center>  
+    </span>
+  </div>
+
+{% elif _search and response %}
+{% if response %}
+
+<div class="container border pt-3">
+  <div class="container p-2">
+    <div class="row g-0">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead class="">
+              <tr>
+                <th>#</th>
+                <th>Título</th>
+                <th>Año</th>
+              </tr>
+            </thead>
+            <tbody class="table-group-divider">
+
+              <form action="/add-movie-rec" method="POST">
+                {% for row in response['results'] %}
+                <tr class="">
+                  <td scope="row">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="id" id="selection" value="{{ row['id'] }}" />
+                      <label class="form-check-label" for="selection">
+                      </label>
+                    </div>
+                  </td>
+                  <td>{{ row['title'] }} ({{ row['original_title'] }})</td>
+                  <td>{{ row['release_date']}}</td>
+                </tr>
+                {% endfor %}
+
+
+
+            </tbody>
+
+
+          </table>
+
+        </div>
+        <div class="pb-2">
+          <center>
+            <button type="submit" class="btn btn-dark">Seleccionar</button>
+          </center>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+  </div>
+
+</div>
+{% endif %}
+
+{% elif not _search %}
+
+<div class="container pt-3">
+  <div class="mb-3">
+    <div class="container pt-3">
+      <div class="mb-3">
+        <form action="/add-movie" method="POST">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" name="search" placeholder="Escribe el título de la película"
+              value="{{ _search }}" aria-label="Escribe el título de la película" aria-describedby="button-addon2">
+            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
+              Buscar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endif %}
+
+
+
+{%include"/app/footer.html"%}

@@ -1,0 +1,36 @@
+{% include "app/header.html" %}
+
+<div class="container border pt-3">
+  <div class="container p-2">
+    {% for row in response['results'] %}
+
+    <div class="card mb-3">
+      <div class="row g-0">
+        <div class="col-md-2">
+          <img
+            src="https://image.tmdb.org/t/p/original{{ row['poster_path'] }}"
+            class="img-fluid rounded-start"
+            width="200"
+            height="300"
+            alt="..."
+          />
+        </div>
+        <div class="col-md-10">
+          <div class="card-body">
+            <h5 class="card-title">
+              Título: {{ row['title'] }} ({{ row['original_title'] }})
+            </h5>
+            <p>{{ row['release_date'] }}</p>
+            <p class="card-text">{{ row['overview']}}</p>
+            <p class="card-text">
+              <small class="text-body-secondary">Last updated 3 mins ago</small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% include "app/footer.html" %}
