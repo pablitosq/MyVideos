@@ -1,5 +1,9 @@
 from flask import Flask, request, render_template, jsonify, redirect, url_for
+from os.path import basename
 import requests
+import os
+import ntpath
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
@@ -82,16 +86,16 @@ def add_movie():
             
     return render_template('movies/add-movie.html')
 
-@app.route('/add-movie-rec', methods=['GET', 'POST'])
-def add_movie_rec():
+@app.route('/add-movie-select', methods=['GET', 'POST'])
+def add_movie_select():
     if request.method == 'POST':
         
         if request.form['id']:
             
-            movie_id = request.form['id']
-            print(movie_id)
+            id = request.form['id']
+            #print(movie_id)
             
-            url = f"https://api.themoviedb.org/3/movie/{movie_id}?language=es-ES"
+            url = f"https://api.themoviedb.org/3/movie/{id}?language=es-ES"
             
             headers = {
                 "accept": "application/json",
@@ -108,29 +112,78 @@ def add_movie_rec():
             
             #Créditos
                 
-            url2 = f"https://api.themoviedb.org/3/movie/{movie_id}/credits?language=es-ES"
+            url2 = f"https://api.themoviedb.org/3/movie/{id}/credits?language=es-ES"
 
             response_movie_credits = requests.get(url2, headers=headers)
 
             response_movie_credits = response_movie_credits.json()
             print("\n\n")
             
-            for credit in response_movie_credits['cast']:
-                print("Nombre:" , credit['name'])
-                print("Profesión:", credit['character'])
-                print("Imágen: ", credit['profile_path'])
-                print("\n")
-            
-            return render_template('movies/add-movie.html', response_movie=response_movie, response_movie_credits=response_movie_credits)
-        
-        
-        
-    
-    return render_template('movies/add-movie.html')
+#                print("Nombre:" , credit['name'])
+#            for credit in response_movie_credits['cast']:
+#                print("Profesión:", credit['character'])
+#                print("Imágen: ", credit['profile_path'])
+#                print("\n") 
 
+            
+            return render_template('movies/add-movie.html', response_movie=response_movie, response_movie_credits=response_movie_credits, id=id)
+
+    return render_template('movies/add-movie.html')            
+
+
+@app.route('/add-movie-rec/', methods=['GET', 'POST'])
+def add_movie_rec():
+    
+    if request.method == 'POST':
+        if request.form['movie_id']:
+            id = request.form['movie_id']
+
+            url = f"https://api.themoviedb.org/3/movie/{id}?language=es-ES"
+            
+            headers = {
+                "accept": "application/json",
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTY5Njg1Zjg1ODMzNWU5MmI3NjM4NGNmYmE1OWIzZCIsInN1YiI6IjY2Mzc3ZGUzODNlZTY3MDEyZDQxY2Q0MyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.v4g7x6bSiDGvXvvab_WFpn2_m1rn3P3CE1wFUWbSAwE"
+            }
+            
+            response_movie = requests.get(url, headers=headers)
+            response_movie = response_movie.json()
+                        
+        
+    return render_template('movies/add-movie-rec.html', id=id, response_movie=response_movie)
+
+@app.route('/add-movie-record', methods=['GET', 'POST'])
+def add_movie_record():
+    
+    if request.method == 'POST':
+
+        id = request.form['movie_id']
+        url = f"https://api.themoviedb.org/3/movie/{id}?language=es-ES"
+        
+        headers = {
+            "accept": "application/json",
+            "Authorization": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyZTY5Njg1Zjg1ODMzNWU5MmI3NjM4NGNmYmE1OWIzZCIsInN1YiI6IjY2Mzc3ZGUzODNlZTY3MDEyZDQxY2Q0MyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.v4g7x6bSiDGvXvvab_WFpn2_m1rn3P3CE1wFUWbSAwE"
+        }
+            
+        response_movie = requests.get(url, headers=headers)
+        response_movie = response_movie.json()
+             
+                        
+        file_video = request.files['file']
+        filename = secure_filename(file_video.filename)
+
+        extension = os.path.splitext(filename)[1]
+        nuevoNombre = response_movie['title'] + extension
+        
+        
+        
+        print(nuevoNombre)
+        
+        
+    return redirect("/") 
 @app.errorhandler(404)
 def page_not_found(e):
     return "<h1>No se encuentra esta página</h1>", 404
 
 if __name__ == '__main__':
     app.run(debug=True)
+
