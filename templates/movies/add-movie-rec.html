@@ -1,0 +1,33 @@
+{% include "/app/header.html" %}
+
+
+<div class="container pt-3">
+    <h2> {{ response_movie['title'] }} </h2>
+    <hr>
+
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+
+            <div class="mb-3">
+                <form action="/add-movie-record" method="POST" enctype="multipart/form-data">
+
+                    <label for="filevideo" class="form-label">Default file input example</label>
+                    <input type="hidden" name="movie_id" value="{{ response_movie['id'] }}" >
+                    <input class="form-control mb-3" name="file" type="file" id="filevideo">
+                    <center>
+                        <button type="submit" class="btn btn-dark mb-3">Agregar</button>
+
+                    </center>
+
+                </form>
+            </div>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+
+
+</div>
+
+
+{% include "/app/footer.html" %}
